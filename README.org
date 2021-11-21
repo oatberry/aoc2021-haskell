@@ -1,0 +1,5 @@
+* Advent of Code 2021 à la Haskell
+I'll be doing [[https://adventofcode.com/2021][Advent of Code 2021]] primarily in haskell, and I threw together a project with some useful dependencies and convenience functions to make each day as swift and easy as I can.
+** How's this all work then?
+Each day gets its own module, and they get imported into ~Main~ and put into a list, it's pretty sweet.
+There are some utility functions in ~Common~ for some nice things like running the parts of the day with output, fetching a day's input from adventofcode.com directly and caching it, and a couple other things.

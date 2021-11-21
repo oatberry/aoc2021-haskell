@@ -1,0 +1,37 @@
+name:                aoc2021-haskell
+version:             0.1.0.0
+github:              "oatberry/aoc2021-haskell"
+license:             MIT
+author:              "Thomas Berryhill"
+maintainer:          "thomas@berryhill.me"
+copyright:           "2021 Thomas Berryhill"
+
+extra-source-files:
+- README.org
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/oatberry/aoc2021-haskell#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- req
+- bytestring
+- containers
+- megaparsec
+- vector
+
+library:
+  source-dirs: src
+
+executables:
+  aoc2021-haskell-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - aoc2021-haskell
