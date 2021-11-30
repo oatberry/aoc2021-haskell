@@ -2,11 +2,14 @@ module Day1 (day1) where
 
 import Common
 
-part1 :: String -> String
-part1 rawInput = mempty
+parser :: String -> String
+parser = id
 
-part2 :: String -> String
-part2 rawInput = mempty
+part1 :: String -> ()
+part1 = const ()
+
+part2 :: String -> ()
+part2 = const ()
 
 day1 :: Day
-day1 = Day 1 [part1, part2]
+day1 = Day 1 (simpleParser parser) part1 part2

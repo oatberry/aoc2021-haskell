@@ -1,40 +1,47 @@
-{-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE GADTs #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Common
-  ( getAOCInput,
-    firstOrNothing,
-    Day (..),
-    runDay,
-    Parser,
-  )
-where
+module Common (Day (..), Parser, simpleParser, runDay) where
 
 import Control.Exception (IOException, try)
 import qualified Data.ByteString.Char8 as C
-import Data.Foldable (for_)
-import Data.Maybe (listToMaybe)
 import Data.Void (Void)
 import Network.HTTP.Req
 import System.Exit (exitFailure)
 import System.IO (hPutStrLn, stderr)
-import Text.Megaparsec (Parsec)
+import Text.Megaparsec (Parsec, eof, parse, takeRest)
+import Text.Megaparsec.Char (space)
+import Text.Megaparsec.Error (errorBundlePretty)
 import Text.Printf (printf)
+
+data Day where
+  Day ::
+    (Show out1, Show out2) =>
+    -- | day number
+    Int ->
+    -- | parser
+    Parser input ->
+    -- | part 1 solution
+    (input -> out1) ->
+    -- | part 2 solution
+    (input -> out2) ->
+    Day
 
 type Parser = Parsec Void String
 
-data Day = Day
-  { dayNum :: Int,
-    dayParts :: [String -> String]
-  }
+simpleParser :: Show a => (String -> a) -> Parser a
+simpleParser parser = parser <$> takeRest
 
 runDay :: Day -> IO ()
-runDay Day {dayNum, dayParts} = do
-  input <- getAOCInput dayNum
-  let results = zip [1 :: Int ..] $ dayParts <*> [input]
+runDay (Day dayNum parser part1 part2) = do
+  rawInput <- getAOCInput dayNum
   printf "Day %d:\n" dayNum
-  for_ results $ uncurry (printf "  part %d: %s\n")
+  case parse (parser <* space <* eof) "input" rawInput of
+    Left e -> putStrLn $ errorBundlePretty e
+    Right input -> do
+      printf "  part 1: %s\n" . show . part1 $ input
+      printf "  part 2: %s\n" . show . part2 $ input
 
 getAOCInput :: Int -> IO String
 getAOCInput dayNum = do
@@ -67,6 +74,3 @@ getCookie = do
     failCookie = do
       hPutStrLn stderr "Error: Please put your AoC session cookie into ./inputs/cookie"
       exitFailure
-
-firstOrNothing :: Show a => [a] -> String
-firstOrNothing = maybe "Nothing" show . listToMaybe
