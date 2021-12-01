@@ -22,6 +22,13 @@ dependencies:
 - megaparsec
 - vector
 
+ghc-options:
+- -Wall
+- -Wcompat
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wredundant-constraints
+
 library:
   source-dirs: src
 

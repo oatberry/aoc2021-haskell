@@ -30,7 +30,7 @@ data Day where
 
 type Parser = Parsec Void String
 
-simpleParser :: Show a => (String -> a) -> Parser a
+simpleParser :: (String -> a) -> Parser a
 simpleParser parser = parser <$> takeRest
 
 runDay :: Day -> IO ()
