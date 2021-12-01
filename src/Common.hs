@@ -2,7 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Common (Day (..), Parser, simpleParser, runDay) where
+module Common (Day (..), Parser, simpleParser, runDay, getAOCInput) where
 
 import Control.Exception (IOException, try)
 import qualified Data.ByteString.Char8 as C
