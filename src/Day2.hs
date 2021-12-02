@@ -20,19 +20,15 @@ type SubCommand = State Submarine ()
 parser :: Parser SubCommand
 parser = sequence_ <$> many (subCommand <* newline)
   where
-    subCommand =
-      "forward " *> fmap forward num
-        <|> "down " *> fmap down num
-        <|> "up " *> fmap up num
+    subCommand = ("forward " *> fmap forward num) <|> ("down " *> fmap down num) <|> ("up " *> fmap up num)
     num = read <$> some digitChar
 
-forward, down, up :: Int -> SubCommand
-forward x = do
-  aim' <- use aim
-  hPos += x
-  depth += (aim' * x)
-down x = aim += x
-up x = aim -= x
+    forward x = do
+      aim' <- use aim
+      hPos += x
+      depth += (aim' * x)
+    down x = aim += x
+    up x = aim -= x
 
 driveSub :: Getting Int Submarine Int -> SubCommand -> Int
 driveSub final commands = evalState (commands >> getValue) $ Submarine 0 0 0
