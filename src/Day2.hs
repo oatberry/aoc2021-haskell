@@ -1,40 +1,43 @@
-{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TemplateHaskell #-}
 
 module Day2 (day2) where
 
 import Common
-import Data.Foldable (foldl')
-import Text.Megaparsec
+import Control.Monad.Trans.State
+import Lens.Micro.Platform
+import Text.Megaparsec hiding (State)
 import Text.Megaparsec.Char
 
-data Direction = Forward Int | Down Int | Up Int
+data Submarine = Submarine {_hPos :: Int, _depth :: Int, _aim :: Int}
   deriving (Show, Eq)
 
-parser :: Parser [Direction]
-parser = many (direction <* newline)
+makeLenses ''Submarine
+
+type SubCommand = State Submarine ()
+
+parser :: Parser SubCommand
+parser = sequence_ <$> many (subCommand <* newline)
   where
-    direction =
-      "forward " *> fmap Forward num
-        <|> "down " *> fmap Down num
-        <|> "up " *> fmap Up num
+    subCommand =
+      "forward " *> fmap forward num
+        <|> "down " *> fmap down num
+        <|> "up " *> fmap up num
     num = read <$> some digitChar
 
-part1 :: [Direction] -> Int
-part1 = uncurry (*) . foldl' steer (0, 0)
-  where
-    steer (x, y) = \case
-      Forward n -> (x + n, y)
-      Down n -> (x, y + n)
-      Up n -> (x, y - n)
+forward, down, up :: Int -> SubCommand
+forward x = do
+  aim' <- use aim
+  hPos += x
+  depth += (aim' * x)
+down x = aim += x
+up x = aim -= x
 
-part2 :: [Direction] -> Int
-part2 = (\(x, y, _) -> x * y) . foldl' steer (0, 0, 0)
+driveSub :: Getting Int Submarine Int -> SubCommand -> Int
+driveSub final commands = evalState (commands >> getValue) $ Submarine 0 0 0
   where
-    steer (x, y, aim) = \case
-      Forward n -> (x + n, y + (aim * n), aim)
-      Down n -> (x, y, aim + n)
-      Up n -> (x, y, aim - n)
+    getValue = (*) <$> use hPos <*> use final
 
 day2 :: Day
-day2 = Day 2 parser part1 part2
+day2 = Day 2 parser (driveSub aim) (driveSub depth)
