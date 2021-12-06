@@ -16,6 +16,7 @@ import qualified Data.Vector as Vec
 import Linear.V
 import Text.Megaparsec
 import Text.Megaparsec.Char
+import Text.Megaparsec.Char.Lexer (decimal)
 
 type Row = (V 5 (Int, Bool))
 
@@ -27,10 +28,9 @@ data Bingo = Bingo {_nums :: [Int], _boards :: [Board]}
 parser :: Parser Bingo
 parser = Bingo <$> (numsP <* "\n\n") <*> (boardP `sepBy` "\n\n")
   where
-    numsP = numP `sepBy` ","
+    numsP = decimal `sepBy` ","
     boardP = V <$> Vec.replicateM 5 (skipMany "\n" *> rowP) :: Parser Board
-    rowP = V <$> Vec.replicateM 5 (space *> fmap (,False) numP) :: Parser Row
-    numP = read <$> some digitChar
+    rowP = V <$> Vec.replicateM 5 (space *> fmap (,False) decimal) :: Parser Row
 
 playBingo :: Bingo -> [(Int, [Board])]
 playBingo Bingo {_nums, _boards} = zip _nums . drop 1 $ scanl playRound _boards _nums

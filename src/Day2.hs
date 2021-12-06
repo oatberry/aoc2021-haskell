@@ -9,6 +9,7 @@ import Control.Monad.Trans.State
 import Lens.Micro.Platform
 import Text.Megaparsec hiding (State)
 import Text.Megaparsec.Char
+import Text.Megaparsec.Char.Lexer (decimal)
 
 data Submarine = Submarine {_hPos :: Int, _depth :: Int, _aim :: Int}
   deriving (Show, Eq)
@@ -20,8 +21,10 @@ type SubCommand = State Submarine ()
 parser :: Parser SubCommand
 parser = sequence_ <$> many (subCommand <* newline)
   where
-    subCommand = ("forward " *> fmap forward num) <|> ("down " *> fmap down num) <|> ("up " *> fmap up num)
-    num = read <$> some digitChar
+    subCommand =
+      ("forward " *> fmap forward decimal)
+        <|> ("down " *> fmap down decimal)
+        <|> ("up " *> fmap up decimal)
 
     forward x = do
       aim' <- use aim
