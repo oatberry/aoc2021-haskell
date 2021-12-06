@@ -23,6 +23,9 @@ dependencies:
 - vector
 - microlens-platform
 - transformers
+- linear
+- lens
+- distributive
 
 ghc-options:
 - -Wall

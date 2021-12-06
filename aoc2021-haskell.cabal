@@ -28,6 +28,7 @@ library
       Day1
       Day2
       Day3
+      Day4
   other-modules:
       Paths_aoc2021_haskell
   hs-source-dirs:
@@ -37,6 +38,9 @@ library
       base >=4.7 && <5
     , bytestring
     , containers
+    , distributive
+    , lens
+    , linear
     , megaparsec
     , microlens-platform
     , req
@@ -56,6 +60,9 @@ executable aoc2021-haskell-exe
     , base >=4.7 && <5
     , bytestring
     , containers
+    , distributive
+    , lens
+    , linear
     , megaparsec
     , microlens-platform
     , req

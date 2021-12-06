@@ -2,7 +2,15 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Common (Day (..), Parser, simpleParser, runDay, getAOCInput) where
+module Common
+  ( Day (..),
+    Parser,
+    simpleParser,
+    runDay,
+    runDayWithInput,
+    getAOCInput,
+  )
+where
 
 import Control.Exception (IOException, try)
 import qualified Data.ByteString.Char8 as C
@@ -34,8 +42,10 @@ simpleParser :: (String -> a) -> Parser a
 simpleParser parser = parser <$> takeRest
 
 runDay :: Day -> IO ()
-runDay (Day dayNum parser part1 part2) = do
-  rawInput <- getAOCInput dayNum
+runDay day@(Day dayNum _ _ _) = getAOCInput dayNum >>= runDayWithInput day
+
+runDayWithInput :: Day -> String -> IO ()
+runDayWithInput (Day dayNum parser part1 part2) rawInput = do
   printf "Day %d:\n" dayNum
   case parse (parser <* space <* eof) "input" rawInput of
     Left e -> putStrLn $ errorBundlePretty e
