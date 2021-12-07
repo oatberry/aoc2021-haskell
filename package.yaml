@@ -20,6 +20,7 @@ dependencies:
 - bytestring
 - containers
 - megaparsec
+- multiset
 - vector
 - transformers
 - linear

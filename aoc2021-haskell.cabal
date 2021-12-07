@@ -30,6 +30,7 @@ library
       Day3
       Day4
       Day5
+      Day6
   other-modules:
       Paths_aoc2021_haskell
   hs-source-dirs:
@@ -43,6 +44,7 @@ library
     , lens
     , linear
     , megaparsec
+    , multiset
     , req
     , transformers
     , vector
@@ -64,6 +66,7 @@ executable aoc2021-haskell-exe
     , lens
     , linear
     , megaparsec
+    , multiset
     , req
     , transformers
     , vector
