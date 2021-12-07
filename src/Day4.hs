@@ -39,22 +39,18 @@ bingoRounds Bingo {_nums, _boards} = zip _nums . drop 1 $ scanl playRound _board
         & set (cells . filtered ((== number) . fst) . _2) True
     cells = mapped . mapped . mapped
 
-boardScore :: (Int, Board) -> Int
-boardScore (num, board) = num * sumOf unmarkedCells board
+boardScore :: Int -> Board -> Int
+boardScore num board = num * sumOf unmarkedCells board
   where
     unmarkedCells = folded . folded . filtered (not . snd) . _1
 
 isSolved :: Board -> Bool
 isSolved board = ((||) `on` any (all snd)) board (distribute board)
 
-playBingo ::
-  (Functor f, Monoid (f (Int, Board))) =>
-  (Maybe (Int, Board) -> f (Int, Board)) ->
-  Bingo ->
-  f Int
-playBingo monoid = fmap boardScore . mconcat . map findBoard . bingoRounds
+playBingo :: Monoid c => (Maybe Int -> c) -> Bingo -> c
+playBingo monoid = foldMap findBoard . bingoRounds
   where
-    findBoard (num, boards) = monoid . fmap (num,) . find isSolved $ boards
+    findBoard (num, boards) = monoid . fmap (boardScore num) . find isSolved $ boards
 
 day4 :: Day
 day4 = Day 4 parser (getFirst . playBingo First) (getLast . playBingo Last)
