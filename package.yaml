@@ -21,7 +21,6 @@ dependencies:
 - containers
 - megaparsec
 - vector
-- microlens-platform
 - transformers
 - linear
 - lens

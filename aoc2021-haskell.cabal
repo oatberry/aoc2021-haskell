@@ -43,7 +43,6 @@ library
     , lens
     , linear
     , megaparsec
-    , microlens-platform
     , req
     , transformers
     , vector
@@ -65,7 +64,6 @@ executable aoc2021-haskell-exe
     , lens
     , linear
     , megaparsec
-    , microlens-platform
     , req
     , transformers
     , vector

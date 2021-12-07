@@ -5,8 +5,8 @@
 module Day2 (day2) where
 
 import Common
+import Control.Lens
 import Control.Monad.Trans.State
-import Lens.Micro.Platform
 import Text.Megaparsec hiding (State)
 import Text.Megaparsec.Char
 import Text.Megaparsec.Char.Lexer (decimal)
