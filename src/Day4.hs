@@ -1,4 +1,5 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TupleSections #-}
@@ -7,6 +8,7 @@ module Day4 (day4) where
 
 import Common
 import Control.Lens
+import Data.Coerce
 import Data.Distributive
 import Data.Function
 import Data.List (find)
@@ -47,10 +49,10 @@ boardScore num board = num * sumOf unmarkedCells board
 isSolved :: Board -> Bool
 isSolved board = ((||) `on` any (all snd)) board (distribute board)
 
-playBingo :: Monoid c => (Maybe Int -> c) -> Bingo -> c
-playBingo monoid = foldMap findBoard . bingoRounds
+playBingo :: (Monoid b, Coercible b (Maybe Int)) => (Maybe Int -> b) -> Bingo -> Maybe Int
+playBingo monoid = coerce . foldMap findBoard . bingoRounds
   where
     findBoard (num, boards) = monoid . fmap (boardScore num) . find isSolved $ boards
 
 day4 :: Day
-day4 = Day 4 parser (getFirst . playBingo First) (getLast . playBingo Last)
+day4 = Day 4 parser (playBingo First) (playBingo Last)
