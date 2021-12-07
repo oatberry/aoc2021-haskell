@@ -12,12 +12,9 @@ parser = map (map (== '1')) . lines
 data Superlative = Most | Least
 
 findCommon :: Superlative -> [Bool] -> Bool
-findCommon which bits = case which of
-  Most -> ones >= zeroes
-  Least -> zeroes > ones
+findCommon which bits = (balance `on` length) (filter id bits) (filter not bits)
   where
-    ones = length $ filter id bits
-    zeroes = length $ filter not bits
+    balance = case which of Most -> (>=); Least -> (<)
 
 fromBinary :: [Bool] -> Int
 fromBinary = foldl' (\acc i -> (acc * 2) + fromBool i) 0
