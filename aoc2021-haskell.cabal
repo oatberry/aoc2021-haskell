@@ -31,6 +31,7 @@ library
       Day4
       Day5
       Day6
+      Day7
   other-modules:
       Paths_aoc2021_haskell
   hs-source-dirs:
