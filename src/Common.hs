@@ -6,6 +6,7 @@ module Common
   ( Day (..),
     Parser,
     simpleParser,
+    testParser,
     runDay,
     runDayWithInput,
     getAOCInput,
@@ -18,7 +19,7 @@ import Data.Void (Void)
 import Network.HTTP.Req
 import System.Exit (exitFailure)
 import System.IO (hPutStrLn, stderr)
-import Text.Megaparsec (Parsec, eof, parse, takeRest)
+import Text.Megaparsec (Parsec, eof, parse, parseMaybe, takeRest)
 import Text.Megaparsec.Char (space)
 import Text.Megaparsec.Error (errorBundlePretty)
 import Text.Printf (printf)
@@ -40,6 +41,9 @@ type Parser = Parsec Void String
 
 simpleParser :: (String -> a) -> Parser a
 simpleParser parser = parser <$> takeRest
+
+testParser :: Parser a -> String -> Maybe a
+testParser p = parseMaybe (p <* space <* eof)
 
 runDay :: Day -> IO ()
 runDay day@(Day dayNum _ _ _) = getAOCInput dayNum >>= runDayWithInput day
