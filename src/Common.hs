@@ -17,6 +17,7 @@ import Control.Exception (IOException, try)
 import qualified Data.ByteString.Char8 as C
 import Data.Void (Void)
 import Network.HTTP.Req
+import System.CPUTime
 import System.Exit (exitFailure)
 import System.IO (hPutStrLn, stderr)
 import Text.Megaparsec (Parsec, eof, parse, parseMaybe, takeRest)
@@ -51,11 +52,15 @@ runDay day@(Day dayNum _ _ _) = getAOCInput dayNum >>= runDayWithInput day
 runDayWithInput :: Day -> String -> IO ()
 runDayWithInput (Day dayNum parser part1 part2) rawInput = do
   printf "Day %d:\n" dayNum
+  startTime <- getCPUTime
   case parse (parser <* space <* eof) "input" rawInput of
     Left e -> putStrLn $ errorBundlePretty e
     Right input -> do
       printf "  part 1: %s\n" . show . part1 $ input
       printf "  part 2: %s\n" . show . part2 $ input
+  endTime <- getCPUTime
+  let diff = fromIntegral (endTime - startTime) / (10 ^ (12 :: Int))
+  printf "  run time: %0.3fs\n" (diff :: Double)
 
 getAOCInput :: Int -> IO String
 getAOCInput dayNum = do
